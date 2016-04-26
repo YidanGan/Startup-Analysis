@@ -1,69 +1,80 @@
-import Sequelize from 'Sequelize';
-import _ from 'lodash';
-import Faker from 'faker';
+import Sequelize from 'sequelize';
 
-const Conn = new Sequelize (
- 'name-of-database',
- 'user-name',
- 'user-pw',
- {
-  dialect:'mysql',
-  host: 'localhost'
- }
+var Conn = new Sequelize (
+  'mada_data',
+  'root',
+  '04140728',
+  {
+    dialect: 'mysql',
+    host: 'localhost',
+    port: 3306
+  }
 );
 
-//define tables
-const Person = Conn.define('person',{
-  firstName: {
-   type: Sequelize.STRING,
-   allowNull: false
+const cb_degrees = Conn.define( 'cb_degrees', {
+  id: {
+    type: Sequelize.BIGINT(20),
+    primaryKey: true,
+    allowNull: false
   },
-  lastName:{
-   type: Sequelize.STRING,
-   allowNull: false
-  }
-  email:{
-   type: Sequelize.STRING,
-   allowNull: false
-   validate: {
-     isEmail: true
-   }
-  }
-});
-
-const Post = Conn.define('post', {
-  title: {
+  object_id: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  content: {
+  degree_type: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  subject: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  institution: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  graduated_at: {
+    type: Sequelize.DATE,
+  },
+  created_at: {
+    type: Sequelize.DATE,
+  },
+  updated_at: {
+    type: Sequelize.DATE,
   }
+}, {
+  tableName: 'cb_degrees',
+  timestamps: false
 });
 
-//relationship
-Person.hasMany(Post);
-Post.belongsTo(Person);
-
-
-Conn.sync({force: true}).then(()=> {
-  _.times(10,()=>{
-    return Person.create({
-      firstName: Faker.name.firstName(),
-      lastName: Faker.name.lastName(),
-      email: Faker.internet.email()
-    }).then(person => {
-     return person.createPost({
-       title: 'Sample title by ${person.firstName',
-       content: 'This is a sample article'
-     });
-    });
-  });
+const cb_people = Conn.define( 'cb_people', {
+  id: {
+    type: Sequelize.BIGINT(20),
+    primaryKey: true,
+    allowNull: false
+  },
+  object_id: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  first_name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  last_name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  birthplace: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  affiliation_name: {
+    type: Sequelize.STRING,
+  }
+}, {
+  tableName: 'cb_people',
+  timestamps: false
 });
 
 export default Conn;
-
-
-
-
